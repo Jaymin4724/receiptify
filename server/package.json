@@ -1,0 +1,35 @@
+{
+  "name": "receiptify",
+  "version": "1.0.0",
+  "description": "Receiptify - An Automated Expense Tracker with OCR and Cloud Integration",
+  "keywords": [
+    "expense-tracker",
+    "OCR",
+    "AWS",
+    "S3",
+    "Google Vision API",
+    "GraphQL",
+    "MERN"
+  ],
+  "homepage": "https://github.com/Jaymin4724/receiptify#readme",
+  "bugs": {
+    "url": "https://github.com/Jaymin4724/receiptify/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jaymin4724/receiptify.git"
+  },
+  "license": "ISC",
+  "author": "Jaymin Dave",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "server": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.0"
+  }
+}
