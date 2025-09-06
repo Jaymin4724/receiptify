@@ -137,3 +137,6 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Custom config files
+*/config/fleet-radar-342803-1aa6fa7caa91.json
