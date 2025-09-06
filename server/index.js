@@ -1,10 +1,56 @@
+// Package Imports
 import express from "express";
-import dotenv from "dotenv";
+import "dotenv/config";
+import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import cors from "cors";
+import morgan from "morgan";
+import rateLimit from "express-rate-limit";
 
-const server = express();
+// File Imports
+import { connectDB } from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
+import expenseRoutes from "./routes/expenseRoutes.js";
 
-dotenv.config();
+// Variables
+const PORT = process.env.PORT || 3000;
+const app = express();
 
-server.listen(process.env.PORT, () =>
-  console.log(`Server Started Successfully at http://localhost:${process.env.PORT}/`)
-);
+// Middleware
+app.use(express.json()); // Parse JSON
+app.use(cookieParser()); // Parse cookies
+app.use(helmet()); // Secure HTTP headers
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true })); // Allow frontend domain
+app.use(morgan("dev")); // Request logging
+
+// Rate limit for auth routes (prevent brute force)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // max 10 requests per window per IP
+  message: { message: "Too many login/signup attempts, try again later" },
+});
+app.use("/api/auth", authLimiter);
+
+// Routes
+app.get("/", (req, res) => {
+  res.send("API is working...");
+});
+
+app.use("/api/auth", authRoutes);
+app.use("/api/expenses", expenseRoutes);
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error("Unhandled Error:", err);
+  res.status(err.statusCode || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
+});
+
+// Start server after DB connection
+connectDB().then(() => {
+  app.listen(PORT, () =>
+    console.log(`🚀 Server running at http://localhost:${PORT}/`)
+  );
+});
