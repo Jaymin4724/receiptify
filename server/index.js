@@ -11,6 +11,7 @@ import rateLimit from "express-rate-limit";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
+import receiptRoutes from "./routes/receiptRoutes.js";
 
 // Variables
 const PORT = process.env.PORT || 3000;
@@ -38,6 +39,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/expenses", expenseRoutes);
+app.use("/api/receipts", receiptRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
