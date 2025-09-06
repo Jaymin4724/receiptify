@@ -17,7 +17,7 @@ Receiptify is a full-stack web application designed to simplify expense tracking
 
 The application is architected with a decoupled frontend and backend, communicating via a RESTful API. The diagram below illustrates the core components and data flow.
 
-<pre class="vditor-reset" placeholder="" contenteditable="true" spellcheck="false"><p data-block="0"><img src="https://file+.vscode-resource.vscode-cdn.net/c%3A/Users/Jaymin/Desktop/Receiptify/image/README/1757127232311.png" alt="1757127232311"/></p></pre>
+<pre class="vditor-reset" placeholder="" contenteditable="true" spellcheck="false"><p data-block="0"><img src="/image/README/1757127232311.png" alt="1757127232311"/></p></pre>
 
 ### System Workflow
 
