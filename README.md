@@ -1,43 +1,112 @@
-# Receiptify - Automated Expense Tracker
+Got it ✅
+I’ll reorder your README into a clean, professional flow while keeping everything you wrote.
 
-Receiptify is a full-stack web application designed to simplify expense tracking. Users can upload images of their receipts, and the application automatically extracts key information like the vendor, amount, and date using Optical Character Recognition (OCR). This project is built with a focus on security, scalability, and modern development practices, leveraging a MERN stack and cloud services from AWS and Google Cloud.
+Here’s the **properly ordered README.md**:
 
-**Live Demo : `<link>`**
+---
 
-## Key Features
+# 📌 Receiptify – Automated Expense Tracker
 
-* **Secure User Authentication:** Robust authentication system using JWTs stored in secure `httpOnly` cookies.
-* **Cloud Image Uploads:** Securely upload and store receipt images in an AWS S3 bucket.
-* **Automated Data Extraction:** Leverages Google Cloud Vision API to automatically parse text from receipts.
-* **Full CRUD Functionality:** Users can create, read, update, and delete their expenses through a RESTful API.
-* **Production-Ready Security:** Implements rate limiting, secure HTTP headers (`helmet`), and CORS policies.
-* **Input Validation:** Server-side validation of all user input to ensure data integrity.
+Receiptify is a **full-stack expense tracker** that extracts and structures data from uploaded receipts using **OCR** and **AI**. With a secure, cloud-first architecture, it simplifies expense management for users by automating receipt processing.
 
-## Architecture & System Design
+---
 
-The application is architected with a decoupled frontend and backend, communicating via a RESTful API. The diagram below illustrates the core components and data flow.
+## ✨ Features
 
-<pre class="vditor-reset" placeholder="" contenteditable="true" spellcheck="false"><p data-block="0"><img src="/image/README/1757127232311.png" alt="1757127232311"/></p></pre>
+* 🔐 **Secure Authentication** – JWT with httpOnly cookies
+* ☁️ **Cloud Storage** – Receipt images stored securely on AWS S3
+* 👁 **OCR Extraction** – Google Cloud Vision API extracts raw text from receipts
+* 🤖 **AI-Powered Parsing** – Google Gemini API converts OCR text into structured fields (vendor, amount, date)
+* 📊 **Expense Management** – Full CRUD operations for expenses
+* 🛡 **Production-Grade Security** – Helmet, CORS, rate limiting, secure headers
+* ✅ **Validation** – Server-side validation to maintain data integrity
 
-### System Workflow
+---
 
-1. **User Uploads Image:** The React frontend sends the receipt image to the Node.js/Express backend.
-2. **Store in S3:** The backend uploads the image to a secure AWS S3 bucket and gets a public URL.
-3. **Process with Vision API:** The backend sends the image URL to the Google Cloud Vision API for processing.
-4. **Extract & Parse Data:** The Vision API returns the extracted text. The backend then parses this text to find the vendor, amount, and date.
-5. **Create Expense Record:** Once the data is successfully parsed, a new 'Expense' document is created in MongoDB with the final details and the S3 image URL.
-6. **Display to User:** The frontend queries the API and displays the newly created expense information on the user's dashboard.
+## 🏗 Architecture & Workflow
 
-## Tech Stack
+1. **User Uploads Receipt** → React frontend sends receipt image to backend
+2. **Image Storage** → Backend uploads image to AWS S3
+3. **OCR Processing** → Backend sends image to Google Cloud Vision API → returns raw text
+4. **AI Parsing** → Gemini API processes OCR output → extracts vendor, amount, and date
+5. **Database Entry** → Expense record stored in MongoDB (with receipt link + parsed fields)
+6. **User Dashboard** → React frontend fetches and displays structured expense data
 
-This project uses a modern and robust set of technologies chosen for performance and security.
+---
 
-| **Category**              | **Technology**                                                                          |
-| ------------------------------- | --------------------------------------------------------------------------------------------- |
-| **Frontend**              | React.js, TailwindCSS                                                                         |
-| **Backend**               | Node.js, Express.js                                                                           |
-| **Database**              | MongoDB (with Mongoose)                                                                       |
-| **Authentication**        | JSON Web Tokens (JWT), bcryptjs                                                               |
-| **Security & Middleware** | `helmet`,`cors`,`express-rate-limit`,`express-validator`,`morgan`,`cookie-parser` |
-| **Cloud Services**        | **AWS S3**(for image storage),**Google Cloud Vision API**(for OCR)                |
-| **Deployment**            | **AWS EC2 / Elastic Beanstalk**(Backend),**AWS S3 & CloudFront**(Frontend)        |
+## 📊 Diagrams
+
+### Sequence Diagram
+
+![1757186414940](image/README/1757186414940.png)
+
+### Class Diagram
+
+![1757186431089](image/README/1757186431089.png)
+
+---
+
+## 📂 Backend Structure
+
+```
+server/
+│── index.js                 # App entry point
+│── .env                     # Environment variables
+│
+├── config/
+│   ├── db.js                # MongoDB connection
+│   └── google-credentials.json # Google Cloud credentials
+│
+├── controllers/
+│   ├── authController.js    # Handles user auth (login/register)
+│   ├── expenseController.js # CRUD for expenses
+│   └── receiptController.js # Receipt upload + OCR + Gemini parsing
+│
+├── middleware/
+│   └── authMiddleware.js    # JWT authentication middleware
+│
+├── models/
+│   ├── userModel.js         # User schema
+│   └── expenseModel.js      # Expense schema
+│
+├── routes/
+│   ├── authRoutes.js        # /api/auth endpoints
+│   ├── expenseRoutes.js     # /api/expenses endpoints
+│   └── receiptRoutes.js     # /api/receipts endpoints
+│
+└── utils/
+    ├── generateToken.js     # JWT token generation
+    └── s3Upload.js          # AWS S3 upload utility
+```
+
+---
+
+## 🛠 Tech Stack
+
+* **Frontend** : React.js, TailwindCSS
+* **Backend** : Node.js, Express.js
+* **Database** : MongoDB + Mongoose
+* **Authentication** : JWT, bcryptjs
+* **Security** : Helmet, CORS, Rate Limiting, Express-Validator
+* **Cloud Services** :
+
+  * AWS S3 → Image storage
+  * Google Cloud Vision API → OCR extraction
+  * Google Gemini API → AI-powered parsing
+* **Deployment** : AWS EC2/Elastic Beanstalk (backend), S3 + CloudFront (frontend)
+
+---
+
+## 🔐 Security Practices
+
+* Environment variables managed via `.env` (no secrets committed)
+* JWT stored in `httpOnly` cookies to prevent XSS attacks
+* Rate limiting + Helmet for protection against brute force & common attacks
+* Input validation with `express-validator`
+
+---
+
+✅ This ordering is now **logical**:
+Intro → Features → Workflow → Diagrams → Backend Structure → Tech Stack → Security.
+
+Do you want me to also prepare a **System Architecture Diagram** (PlantUML or PNG) so you can put it in the "Diagrams" section along with the class & sequence diagrams?
