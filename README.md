@@ -1,10 +1,3 @@
-Got it ✅
-I’ll reorder your README into a clean, professional flow while keeping everything you wrote.
-
-Here’s the **properly ordered README.md**:
-
----
-
 # 📌 Receiptify – Automated Expense Tracker
 
 Receiptify is a **full-stack expense tracker** that extracts and structures data from uploaded receipts using **OCR** and **AI**. With a secure, cloud-first architecture, it simplifies expense management for users by automating receipt processing.
@@ -38,11 +31,11 @@ Receiptify is a **full-stack expense tracker** that extracts and structures data
 
 ### Sequence Diagram
 
-![1757186414940](image/README/1757186414940.png)
+![1757186414940](image/README/1757186110296.png)
 
 ### Class Diagram
 
-![1757186431089](image/README/1757186431089.png)
+![1757186431089](image/README/1757186237107.png)
 
 ---
 
@@ -103,10 +96,3 @@ server/
 * JWT stored in `httpOnly` cookies to prevent XSS attacks
 * Rate limiting + Helmet for protection against brute force & common attacks
 * Input validation with `express-validator`
-
----
-
-✅ This ordering is now **logical**:
-Intro → Features → Workflow → Diagrams → Backend Structure → Tech Stack → Security.
-
-Do you want me to also prepare a **System Architecture Diagram** (PlantUML or PNG) so you can put it in the "Diagrams" section along with the class & sequence diagrams?
