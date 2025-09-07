@@ -71,9 +71,7 @@ server/
     ├── generateToken.js     # JWT token generation
     └── s3Upload.js          # AWS S3 upload utility
 ```
-
 ---
-
 ## 🛠 Tech Stack
 
 * **Frontend** : React.js, TailwindCSS
@@ -96,3 +94,7 @@ server/
 * JWT stored in `httpOnly` cookies to prevent XSS attacks
 * Rate limiting + Helmet for protection against brute force & common attacks
 * Input validation with `express-validator`
+
+---
+
+## [Receiptify Backend: A Complete Technical Guide](https://docs.google.com/document/d/1clch8DYhW5OCEbxei0WYfRUWr6jhAu6wcbzprIkzAQc/edit?usp=sharing)
