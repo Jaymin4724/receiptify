@@ -7,7 +7,20 @@ const expenseSchema = new mongoose.Schema(
     date: { type: Date, default: Date.now },
     receiptImageUrl: { type: String, required: true },
 
-    // Link expense to user
+    category: {
+      type: String,
+      enum: [
+        "Food",
+        "Travel",
+        "Shopping",
+        "Utilities",
+        "Entertainment",
+        "Health",
+        "Other",
+      ],
+      default: "Other",
+    },
+
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

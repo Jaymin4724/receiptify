@@ -8,7 +8,7 @@ import { s3Client } from "../utils/s3Upload.js";
 const visionClient = new ImageAnnotatorClient();
 
 /**
- * Uses the Gemini LLM to intelligently extract structured data from raw receipt text.
+ * Uses the Gemini LLM to intelligently extract and classify expense data from raw text.
  * @param {string} text The raw text from the receipt OCR.
  * @returns {Promise<object>} A promise that resolves to the structured expense data.
  */
@@ -16,18 +16,23 @@ const extractExpenseDataWithGemini = async (text) => {
   const apiKey = process.env.GEMINI_API_KEY;
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
-  // This is the prompt that instructs the LLM how to behave and what to do.
+  // PROMPT UPGRADED: We now ask the LLM to classify the expense into a category.
   const prompt = `
-    You are an expert expense tracking assistant. Analyze the following raw text from a receipt 
-    and extract the vendor name, the total amount, and the transaction date. 
-    If you cannot determine a value, use a sensible default like "Unknown" for the vendor or null for the amount/date.
+    You are an expert expense tracking assistant. Analyze the following raw text from a receipt.
+    Extract the vendor name, the total amount, and the transaction date.
+    
+    Based on the vendor and the items listed, classify the expense into ONE of the following categories:
+    ["Food", "Travel", "Shopping", "Utilities", "Entertainment", "Health", "Other"].
+    
+    If you cannot determine a value, use a sensible default.
+    
     Receipt Text:
     ---
     ${text}
     ---
   `;
 
-  // This schema defines the exact JSON structure we want the LLM to return.
+  // SCHEMA UPGRADED: We add the 'category' property with an enum to guide the LLM's response.
   const schema = {
     type: "OBJECT",
     properties: {
@@ -35,13 +40,24 @@ const extractExpenseDataWithGemini = async (text) => {
       totalAmount: { type: "NUMBER" },
       transactionDate: {
         type: "STRING",
-        description: "The date in YYYY-MM-DD format, or null if not found.",
+        description: "The date in YYYY-MM-DD format.",
+      },
+      category: {
+        type: "STRING",
+        enum: [
+          "Food",
+          "Travel",
+          "Shopping",
+          "Utilities",
+          "Entertainment",
+          "Health",
+          "Other",
+        ],
       },
     },
-    required: ["vendor", "totalAmount", "transactionDate"],
+    required: ["vendor", "totalAmount", "transactionDate", "category"],
   };
 
-  // Construct the full API payload.
   const payload = {
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: {
@@ -73,13 +89,13 @@ const extractExpenseDataWithGemini = async (text) => {
       vendor: "Parsing Error",
       totalAmount: 0,
       transactionDate: new Date(),
+      category: "Other",
     };
   }
 };
 
 /**
- * Processes an uploaded receipt image, sends it to the Vision and Gemini APIs,
- * and creates a new expense record.
+ * Processes an uploaded receipt, gets structured data from Gemini, and creates an expense.
  */
 export const processReceipt = async (req, res, next) => {
   try {
@@ -90,10 +106,12 @@ export const processReceipt = async (req, res, next) => {
     }
     const s3Key = req.file.key;
 
-    // 1. Generate a temporary URL for Google Vision to perform OCR.
+    // 1. Generate a temporary, viewable URL for Google Vision to perform OCR.
     const command = new GetObjectCommand({
       Bucket: process.env.AWS_S3_BUCKET_NAME,
       Key: s3Key,
+      ResponseContentDisposition: "inline",
+      ResponseContentType: "image/jpeg",
     });
     const presignedUrl = await getSignedUrl(s3Client, command, {
       expiresIn: 600,
@@ -109,16 +127,17 @@ export const processReceipt = async (req, res, next) => {
     }
     const receiptText = detections[0].description;
 
-    // 3. (THE UPGRADE) Use the Gemini LLM to parse the raw text into structured data.
-    const { vendor, totalAmount, transactionDate } =
+    // 3. Use the upgraded Gemini function to get data, now including the category.
+    const { vendor, totalAmount, transactionDate, category } =
       await extractExpenseDataWithGemini(receiptText);
 
-    // 4. Create the new expense document with the intelligent data.
+    // 4. Create the new expense document in the database with the intelligent data.
     const newExpense = new Expense({
       vendor: vendor || "Unknown",
       amount: totalAmount || 0,
       date: transactionDate ? new Date(transactionDate) : new Date(),
-      receiptImageUrl: s3Key,
+      category: category || "Other", // Save the new category.
+      receiptImageUrl: s3Key, // Store the private S3 key.
       owner: req.user._id,
     });
     const savedExpense = await newExpense.save();
@@ -141,15 +160,18 @@ export const getDisplayableReceiptUrl = async (req, res, next) => {
       _id: req.params.id,
       owner: req.user._id,
     });
+
     if (!expense) {
       return res.status(404).json({ message: "Expense not found" });
     }
+
     const command = new GetObjectCommand({
       Bucket: process.env.AWS_S3_BUCKET_NAME,
       Key: expense.receiptImageUrl,
       ResponseContentDisposition: "inline",
       ResponseContentType: "image/jpeg",
     });
+
     const presignedUrl = await getSignedUrl(s3Client, command, {
       expiresIn: 300,
     });
