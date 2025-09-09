@@ -1,85 +1,76 @@
 import { useContext, useState, useMemo } from "react";
 import { AuthContext } from "../context/AuthContext";
 
+// Hooks
 import UseGetExpense from "../hooks/UseGetExpense";
-import UseGetReceipt from "../hooks/UseGetReceiept";
+import UseGetReceipt from "../hooks/UseGetReceipt";
 
+// Components
 import Navbar from "../components/Navbar";
 import SummaryCards from "../components/SummaryCards";
 import FilterBar from "../components/FilterBar";
 import ExpensesTable from "../components/ExpensesTable";
 import ReceiptModal from "../components/ReceiptModal";
 
+// Utils
+import {
+  filterExpenses,
+  calculateTotalExpense,
+  calculateThisMonthExpense,
+  findMostSpentCategory,
+} from "../utils/calculations";
+
 export default function Dashboard() {
   const { currentUser } = useContext(AuthContext);
-  const { expenses, loading: loadingExpense } = UseGetExpense();
+
+  // Data fetching hooks
+  const { expenses: allExpenses, loading: loadingExpense } = UseGetExpense();
   const { receiptUrl, fetchReceipt, loading: loadingReceipt } = UseGetReceipt();
+
+  // State for filters and modal visibility
   const [filter, setFilter] = useState("all");
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
-  const [selectedReceipt, setSelectedReceipt] = useState(null);
+  const [selectedReceiptId, setSelectedReceiptId] = useState(null);
 
-  // Filtered expenses
-  const filteredExpenses = useMemo(() => {
-    if (!expenses) return [];
-    const now = new Date();
+  // Memoized calculations using utility functions
+  const filteredExpenses = useMemo(
+    () => filterExpenses(allExpenses, filter, customRange),
+    [allExpenses, filter, customRange]
+  );
 
-    if (filter === "month") {
-      return expenses.filter(
-        (e) => new Date(e.createdAt).getMonth() === now.getMonth()
-      );
-    }
-    if (filter === "year") {
-      return expenses.filter(
-        (e) => new Date(e.createdAt).getFullYear() === now.getFullYear()
-      );
-    }
-    if (filter === "custom" && customRange.start && customRange.end) {
-      const start = new Date(customRange.start);
-      const end = new Date(customRange.end);
-      return expenses.filter((e) => {
-        const date = new Date(e.createdAt);
-        return date >= start && date <= end;
-      });
-    }
-    return expenses;
-  }, [expenses, filter, customRange]);
+  const summaryStats = useMemo(() => {
+    // Note: This month's expense is calculated from all expenses, not just filtered ones.
+    const totalFilteredExpense = calculateTotalExpense(filteredExpenses);
+    const thisMonthExpense = calculateThisMonthExpense(allExpenses || []);
+    const mostSpentCategory = findMostSpentCategory(filteredExpenses);
 
-  // Summary values
-  const totalExpense = filteredExpenses.reduce((acc, e) => acc + e.amount, 0);
-  const thisMonthExpense = expenses
-    ? expenses
-        .filter(
-          (e) => new Date(e.createdAt).getMonth() === new Date().getMonth()
-        )
-        .reduce((acc, e) => acc + e.amount, 0)
-    : 0;
-  const mostSpentCategory = useMemo(() => {
-    if (!filteredExpenses.length) return "N/A";
-    const categoryTotals = {};
-    filteredExpenses.forEach((e) => {
-      categoryTotals[e.category] = (categoryTotals[e.category] || 0) + e.amount;
-    });
-    return Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0][0];
-  }, [filteredExpenses]);
+    return { totalFilteredExpense, thisMonthExpense, mostSpentCategory };
+  }, [filteredExpenses, allExpenses]);
+
+  // Event Handlers for clarity
+  const handleViewReceipt = (expenseId) => {
+    fetchReceipt(expenseId);
+    setSelectedReceiptId(expenseId);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedReceiptId(null);
+  };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Navbar */}
+    <div className="min-h-screen flex flex-col bg-base-100">
       <Navbar />
-
-      <main className="flex-1 p-6 bg-base-100">
+      <main className="flex-1 p-6">
         <h1 className="text-2xl font-bold mb-4">
           Welcome, {currentUser?.name || "User"}
         </h1>
 
-        {/* Summary Cards */}
         <SummaryCards
-          totalExpense={totalExpense}
-          thisMonthExpense={thisMonthExpense}
-          mostSpentCategory={mostSpentCategory}
+          totalExpense={summaryStats.totalFilteredExpense}
+          thisMonthExpense={summaryStats.thisMonthExpense}
+          mostSpentCategory={summaryStats.mostSpentCategory}
         />
 
-        {/* Filters */}
         <FilterBar
           filter={filter}
           setFilter={setFilter}
@@ -87,21 +78,18 @@ export default function Dashboard() {
           setCustomRange={setCustomRange}
         />
 
-        {/* Expenses Table */}
         <ExpensesTable
           expenses={filteredExpenses}
           loading={loadingExpense}
-          fetchReceipt={fetchReceipt}
-          setSelectedReceipt={setSelectedReceipt}
+          onViewReceipt={handleViewReceipt}
         />
       </main>
 
-      {/* Modal */}
       <ReceiptModal
-        selectedReceipt={selectedReceipt}
+        isOpen={!!selectedReceiptId}
         loading={loadingReceipt}
         receiptUrl={receiptUrl}
-        onClose={() => setSelectedReceipt(null)}
+        onClose={handleCloseModal}
       />
     </div>
   );

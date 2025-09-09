@@ -8,18 +8,20 @@ const getErrorMessage = (error) =>
 const UseGetReceipt = () => {
   const [loading, setLoading] = useState(false);
   const [receiptUrl, setReceiptUrl] = useState(null);
+
   const fetchReceipt = async (expenseId) => {
     if (!expenseId) {
       toast.error("Expense ID is required");
       return;
     }
+
     setLoading(true);
+    setReceiptUrl(null);
     try {
       const res = await axios.get(`/api/receipts/${expenseId}`);
       setReceiptUrl(res.data.displayUrl || null);
     } catch (error) {
       toast.error(getErrorMessage(error));
-      setReceiptUrl(null);
     } finally {
       setLoading(false);
     }

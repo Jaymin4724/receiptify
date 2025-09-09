@@ -24,17 +24,18 @@ const UseLogin = () => {
     }
     return true;
   };
+
   const login = async (formData) => {
     const validation = handleInputErrors(formData);
     if (!validation) return;
+
     setLoading(true);
     try {
       const res = await axios.post("/api/auth/login", formData);
-      toast.success("Login successful!");
       const userData = res.data.user;
-      console.log(userData);
       localStorage.setItem("user", JSON.stringify(userData));
       setCurrentUser(userData);
+      toast.success("Login successful!");
       navigate("/dashboard");
     } catch (error) {
       toast.error(getErrorMessage(error));
@@ -42,6 +43,7 @@ const UseLogin = () => {
       setLoading(false);
     }
   };
+
   return { loading, login };
 };
 

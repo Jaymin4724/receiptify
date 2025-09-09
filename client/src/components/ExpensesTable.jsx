@@ -1,12 +1,8 @@
-export default function ExpensesTable({
-  expenses,
-  loading,
-  setSelectedReceipt,
-  fetchReceipt,
-}) {
+export default function ExpensesTable({ expenses, loading, onViewReceipt }) {
   return (
     <div className="overflow-y-auto max-h-[500px]">
       <table className="table table-zebra w-full">
+        {/* Table Head */}
         <thead>
           <tr>
             <th>Vendor</th>
@@ -16,6 +12,7 @@ export default function ExpensesTable({
             <th>Action</th>
           </tr>
         </thead>
+        {/* Table Body */}
         <tbody>
           {loading && (
             <tr>
@@ -37,16 +34,13 @@ export default function ExpensesTable({
             expenses.map((exp) => (
               <tr key={exp._id} className="hover:bg-base-200">
                 <td>{exp.vendor}</td>
-                <td>₹{exp.amount}</td>
+                <td>₹{exp.amount.toLocaleString("en-IN")}</td>
                 <td>{exp.category}</td>
                 <td>{new Date(exp.createdAt).toLocaleDateString()}</td>
                 <td>
                   <button
                     className="btn btn-sm btn-info"
-                    onClick={() => {
-                      fetchReceipt(exp._id);
-                      setSelectedReceipt(exp._id);
-                    }}
+                    onClick={() => onViewReceipt(exp._id)}
                   >
                     View
                   </button>

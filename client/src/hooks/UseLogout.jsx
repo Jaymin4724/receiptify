@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const getErrorMessage = (error) =>
   error.response?.data?.message || error.message || "Something went wrong";
@@ -11,6 +11,7 @@ const UseLogout = () => {
   const [loading, setLoading] = useState(false);
   const { setCurrentUser } = useContext(AuthContext);
   const navigate = useNavigate();
+
   const logout = async () => {
     setLoading(true);
     try {

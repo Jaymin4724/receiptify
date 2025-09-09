@@ -4,27 +4,37 @@ export default function FilterBar({
   customRange,
   setCustomRange,
 }) {
+  const handleFilterClick = (newFilter) => {
+    // Reset custom range when switching away from custom
+    if (filter === "custom" && newFilter !== "custom") {
+      setCustomRange({ start: "", end: "" });
+    }
+    setFilter(newFilter);
+  };
+
   return (
-    <div className="flex gap-3 mb-6 flex-wrap">
+    <div className="flex gap-3 mb-6 flex-wrap items-center">
+      {/* Filter Buttons */}
       <button
-        className={`btn ${filter === "month" ? "btn-accent" : ""}`}
-        onClick={() => setFilter("month")}
+        className={`btn ${filter === "month" ? "btn-accent" : "btn-ghost"}`}
+        onClick={() => handleFilterClick("month")}
       >
         This Month
       </button>
       <button
-        className={`btn ${filter === "year" ? "btn-accent" : ""}`}
-        onClick={() => setFilter("year")}
+        className={`btn ${filter === "year" ? "btn-accent" : "btn-ghost"}`}
+        onClick={() => handleFilterClick("year")}
       >
         This Year
       </button>
       <button
-        className={`btn ${filter === "custom" ? "btn-accent" : ""}`}
-        onClick={() => setFilter("custom")}
+        className={`btn ${filter === "custom" ? "btn-accent" : "btn-ghost"}`}
+        onClick={() => handleFilterClick("custom")}
       >
         Custom
       </button>
 
+      {/* Custom Date Range Inputs */}
       {filter === "custom" && (
         <div className="flex gap-2 items-center">
           <input
@@ -35,6 +45,7 @@ export default function FilterBar({
               setCustomRange({ ...customRange, start: e.target.value })
             }
           />
+          <span>to</span>
           <input
             type="date"
             className="input input-bordered"

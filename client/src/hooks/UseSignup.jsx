@@ -24,17 +24,18 @@ const UseSignup = () => {
     }
     return true;
   };
+
   const signup = async (formData) => {
     const validation = handleInputErrors(formData);
     if (!validation) return;
+
     setLoading(true);
     try {
       const res = await axios.post("/api/auth/signup", formData);
-      toast.success("Signup successful!");
       const userData = res.data.user;
-      console.log(userData);
       localStorage.setItem("user", JSON.stringify(userData));
       setCurrentUser(userData);
+      toast.success("Signup successful!");
       navigate("/dashboard");
     } catch (error) {
       toast.error(getErrorMessage(error));
@@ -42,6 +43,7 @@ const UseSignup = () => {
       setLoading(false);
     }
   };
+
   return { loading, signup };
 };
 
