@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 const getErrorMessage = (error) =>
   error.response?.data?.message || error.message || "Something went wrong";
 
-const useSignup = () => {
+const UseSignup = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setCurrentUser } = useContext(AuthContext);
@@ -19,7 +19,7 @@ const useSignup = () => {
       return false;
     }
     if (password.length < 6) {
-      toast.error("Passwords must be at least 6 characters long !");
+      toast.error("Password must be at least 6 characters long !");
       return false;
     }
     return true;
@@ -45,4 +45,4 @@ const useSignup = () => {
   return { loading, signup };
 };
 
-export default useSignup;
+export default UseSignup;

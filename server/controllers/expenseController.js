@@ -80,7 +80,7 @@ export const addExpense = async (req, res, next) => {
 // Get all expenses for the logged-in user.
 export const getExpenses = async (req, res, next) => {
   try {
-    const expenses = await Expense.find({ owner: req.user._id }).sort({
+    const expenses = await Expense.find({ owner: req.user.id }).sort({
       createdAt: -1,
     });
     res.status(200).json(expenses);
@@ -115,12 +115,10 @@ export const updateExpense = async (req, res, next) => {
     if (category !== undefined) expense.category = category; // Update the category.
 
     const updatedExpense = await expense.save();
-    res
-      .status(200)
-      .json({
-        message: "Expense updated successfully",
-        expense: updatedExpense,
-      });
+    res.status(200).json({
+      message: "Expense updated successfully",
+      expense: updatedExpense,
+    });
   } catch (error) {
     next(error);
   }

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 const getErrorMessage = (error) =>
   error.response?.data?.message || error.message || "Something went wrong";
 
-const useLogout = () => {
+const UseLogout = () => {
   const [loading, setLoading] = useState(false);
   const { setCurrentUser } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const useLogout = () => {
       await axios.post("/api/auth/logout");
       localStorage.removeItem("user");
       setCurrentUser(null);
-      toast.success("Logged out successfully!");
+      toast.success("Logout successful!");
       navigate("/");
     } catch (error) {
       toast.error(getErrorMessage(error));
@@ -29,4 +29,4 @@ const useLogout = () => {
   return { loading, logout };
 };
 
-export default useLogout;
+export default UseLogout;

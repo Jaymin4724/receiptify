@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
-import useSignup from "../hooks/UseSignup";
-import useLogin from "../hooks/UseLogin";
+import UseSignup from "../hooks/UseSignup";
+import UseLogin from "../hooks/UseLogin";
 import InputField from "../components/InputField";
 
 export default function Home() {
@@ -15,8 +15,8 @@ export default function Home() {
     password: "",
   });
 
-  const { loading: signupLoading, signup } = useSignup();
-  const { loading: loginLoading, login } = useLogin();
+  const { loading: signupLoading, signup } = UseSignup();
+  const { loading: loginLoading, login } = UseLogin();
 
   const handleChange = (e) => {
     const { name, value } = e.target;

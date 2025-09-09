@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 const getErrorMessage = (error) =>
   error.response?.data?.message || error.message || "Something went wrong";
 
-const useLogin = () => {
+const UseLogin = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setCurrentUser } = useContext(AuthContext);
@@ -30,7 +30,7 @@ const useLogin = () => {
     setLoading(true);
     try {
       const res = await axios.post("/api/auth/login", formData);
-      toast.success("Login Successful!");
+      toast.success("Login successful!");
       const userData = res.data.user;
       console.log(userData);
       localStorage.setItem("user", JSON.stringify(userData));
@@ -45,4 +45,4 @@ const useLogin = () => {
   return { loading, login };
 };
 
-export default useLogin;
+export default UseLogin;
