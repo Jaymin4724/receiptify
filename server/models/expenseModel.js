@@ -5,7 +5,7 @@ const expenseSchema = new mongoose.Schema(
     vendor: { type: String, default: "Unknown" },
     amount: { type: Number, required: true, default: 0 },
     date: { type: Date, default: Date.now },
-    receiptImageUrl: { type: String, required: true },
+    receiptImageUrl: { type: String },
 
     category: {
       type: String,

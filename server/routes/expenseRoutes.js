@@ -8,13 +8,30 @@ import {
   addExpenseValidation,
   updateExpenseValidation,
 } from "../controllers/expenseController.js";
+import s3Upload from "../utils/s3Upload.js";
 
 const router = express.Router();
 
 // Protected Routes
-router.post("/", authMiddleware, addExpenseValidation, addExpense); // Add expense
+router.post(
+  "/",
+  authMiddleware,
+  s3Upload.single("receiptImage"),
+  addExpenseValidation,
+  addExpense
+);
+
+// PATCH /api/expenses/:id - Update an expense
+// Also use the middleware here to handle an optional new image upload.
+router.patch(
+  "/:id",
+  authMiddleware,
+  s3Upload.single("receiptImage"),
+  updateExpenseValidation,
+  updateExpense
+);
+
 router.get("/", authMiddleware, getExpenses); // Get all expenses
-router.patch("/:id", authMiddleware, updateExpenseValidation, updateExpense);
 router.delete("/:id", authMiddleware, deleteExpense); // Delete expense
 
 export default router;

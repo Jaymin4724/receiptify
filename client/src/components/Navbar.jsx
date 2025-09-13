@@ -1,20 +1,47 @@
-import { useState } from "react";
+import { useState, useRef } from "react"; // Import useRef
 import { LogOut, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo_4.png";
 import useLogout from "../hooks/UseLogout";
+import useUploadReceipt from "../hooks/UseUploadReceipt";
 
 export default function Navbar() {
-  const { loading, logout } = useLogout();
+  const { loading: logoutLoading, logout } = useLogout();
+  const { loading: uploadLoading, uploadReceipt } = useUploadReceipt();
   const [showModal, setShowModal] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleConfirmLogout = async () => {
     await logout();
     setShowModal(false);
   };
 
+  // This function is triggered when the user selects a file
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      await uploadReceipt(file);
+      // Clear the input value to allow uploading the same file again
+      event.target.value = null;
+    }
+  };
+
+  // This function programmatically clicks the hidden file input
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <>
+      {/* Hidden file input for uploading receipts */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        style={{ display: "none" }}
+        accept="image/png, image/jpeg, image/webp" // Specify accepted file types
+      />
+
       {/* Navbar */}
       <div className="navbar bg-base-100 shadow-sm px-4">
         {/* Left: Logo */}
@@ -30,15 +57,23 @@ export default function Navbar() {
 
         {/* Right: Buttons */}
         <div className="flex-none hidden md:flex gap-3">
-          <Link to="/upload" className="btn btn-primary btn-sm md:btn-md">
-            <Upload size={18} />
-            Upload Expense
-          </Link>
+          <button
+            onClick={handleUploadClick}
+            className="btn btn-primary btn-sm md:btn-md"
+            disabled={uploadLoading} // Disable button while uploading
+          >
+            {uploadLoading ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              <Upload size={18} />
+            )}
+            {uploadLoading ? "Uploading..." : "Upload Expense"}
+          </button>
 
           <button
             onClick={() => setShowModal(true)}
             className="btn btn-accent btn-sm md:btn-md flex items-center gap-2"
-            disabled={loading}
+            disabled={logoutLoading}
           >
             <LogOut size={20} />
             Logout
@@ -55,15 +90,20 @@ export default function Navbar() {
             className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40"
           >
             <li>
-              <Link to="/upload" className="flex items-center gap-2">
+              {/* Changed from Link to a button to trigger the same upload logic */}
+              <button
+                onClick={handleUploadClick}
+                className="flex items-center gap-2"
+                disabled={uploadLoading}
+              >
                 <Upload size={16} /> Upload
-              </Link>
+              </button>
             </li>
             <li>
               <button
                 onClick={() => setShowModal(true)}
                 className="flex items-center gap-2"
-                disabled={loading}
+                disabled={logoutLoading}
               >
                 <LogOut size={16} /> Logout
               </button>
@@ -83,16 +123,16 @@ export default function Navbar() {
               <button
                 className="btn"
                 onClick={() => setShowModal(false)}
-                disabled={loading}
+                disabled={logoutLoading}
               >
                 Cancel
               </button>
               <button
                 className="btn btn-accent"
                 onClick={handleConfirmLogout}
-                disabled={loading}
+                disabled={logoutLoading}
               >
-                {loading ? (
+                {logoutLoading ? (
                   <span className="loading loading-spinner"></span>
                 ) : (
                   "Logout"
