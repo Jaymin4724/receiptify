@@ -12,7 +12,7 @@ export const filterExpenses = (expenses, filter, customRange) => {
   switch (filter) {
     case "month":
       return expenses.filter((e) => {
-        const expenseDate = new Date(e.createdAt);
+        const expenseDate = new Date(e.date);
         return (
           expenseDate.getMonth() === now.getMonth() &&
           expenseDate.getFullYear() === now.getFullYear()
@@ -21,7 +21,7 @@ export const filterExpenses = (expenses, filter, customRange) => {
 
     case "year":
       return expenses.filter(
-        (e) => new Date(e.createdAt).getFullYear() === now.getFullYear()
+        (e) => new Date(e.date).getFullYear() === now.getFullYear()
       );
 
     case "custom":
@@ -31,7 +31,7 @@ export const filterExpenses = (expenses, filter, customRange) => {
         end.setHours(23, 59, 59, 999); // Include the entire end day
 
         return expenses.filter((e) => {
-          const expenseDate = new Date(e.createdAt);
+          const expenseDate = new Date(e.date);
           return expenseDate >= start && expenseDate <= end;
         });
       }
@@ -62,7 +62,7 @@ export const calculateThisMonthExpense = (expenses) => {
   if (!expenses) return 0;
   const now = new Date();
   const thisMonthExpenses = expenses.filter((e) => {
-    const expenseDate = new Date(e.createdAt);
+    const expenseDate = new Date(e.date);
     return (
       expenseDate.getMonth() === now.getMonth() &&
       expenseDate.getFullYear() === now.getFullYear()
