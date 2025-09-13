@@ -13,7 +13,7 @@ export default function FilterBar({
   };
 
   return (
-    <div className="flex gap-3 mb-6 flex-wrap items-center">
+    <div className="flex gap-3 mb-4 flex-wrap items-center">
       {/* Filter Buttons */}
       <button
         className={`btn ${filter === "month" ? "btn-accent" : "btn-ghost"}`}

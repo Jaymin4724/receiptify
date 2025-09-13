@@ -175,6 +175,7 @@ export const getDisplayableReceiptUrl = async (req, res, next) => {
     const presignedUrl = await getSignedUrl(s3Client, command, {
       expiresIn: 300,
     });
+
     res.status(200).json({ displayUrl: presignedUrl });
   } catch (error) {
     next(error);
