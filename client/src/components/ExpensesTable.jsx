@@ -50,7 +50,7 @@ export default function ExpensesTable({
                 <td>{exp.vendor}</td>
                 <td>₹{exp.amount.toLocaleString("en-IN")}</td>
                 <td>{exp.category}</td>
-                <td>{new Date(exp.createdAt).toLocaleDateString()}</td>
+                <td>{new Date(exp.date).toLocaleDateString()}</td>
                 <td className="flex gap-2 justify-center">
                   <button
                     className="btn btn-sm bg-emerald-600 hover:bg-emerald-500 text-white border-none"
