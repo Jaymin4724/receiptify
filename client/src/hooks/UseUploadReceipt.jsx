@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from "../axiosConfig";
 import toast from "react-hot-toast";
 const getErrorMessage = (error) =>
   error.response?.data?.message || error.message || "Something went wrong";

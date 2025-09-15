@@ -10,7 +10,9 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/api": {
-        target: "http://receiptify-server.ap-south-1.elasticbeanstalk.com/",
+        target:
+          "http://receiptify-env.eba-fvjtkj2h.ap-south-1.elasticbeanstalk.com",
+        changeOrigin: true,
         secure: true,
       },
     },
