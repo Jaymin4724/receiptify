@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "../axiosConfig";
+import axios from "./axiosConfig";
 import toast from "react-hot-toast";
 
 const getErrorMessage = (error) =>

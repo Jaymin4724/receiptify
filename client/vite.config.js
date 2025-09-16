@@ -8,13 +8,12 @@ export default defineConfig({
   server: {
     host: true,
     port: 3000,
-    proxy: {
-      "/api": {
-        target:
-          "http://receiptify-env.eba-fvjtkj2h.ap-south-1.elasticbeanstalk.com",
-        changeOrigin: true,
-        secure: true,
-      },
-    },
+    // proxy: {
+    //   "/api": {
+    //     target: "http://localhost:5000",
+    //     changeOrigin: true,
+    //     secure: true,
+    //   },
+    // },
   },
 });
