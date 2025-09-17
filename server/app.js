@@ -21,8 +21,29 @@ const app = express();
 app.use(express.json()); // Parse JSON
 app.use(cookieParser()); // Parse cookies
 app.use(helmet()); // Secure HTTP headers
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true })); // Allow frontend domain
-app.use(morgan("dev")); // Request logging
+app.set("trust proxy", 1);
+
+const allowedOrigins = process.env.CLIENT_URL || "";
+const whitelist = allowedOrigins.split(",").map((url) => url.trim());
+console.log("Allowed CORS origins:", whitelist);
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("This origin is not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+app.use(cors(corsOptions));
+
+if (process.env.NODE_ENV === "production") {
+  app.use(morgan("combined")); // A standard format for production logs
+} else {
+  app.use(morgan("dev"));
+}
 
 // Rate limit for auth routes (prevent brute force)
 const authLimiter = rateLimit({
